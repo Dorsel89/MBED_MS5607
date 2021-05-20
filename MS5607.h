@@ -1,16 +1,42 @@
+#ifndef MBED_MS5607_H
+#define MBED_MS5607_H
+
+#include "mbed.h"
+#include <cstdint>
+#include <stdint.h>
+
+class MS5607
+{
+    
+	public:
+    
+	MS5607(I2C* i2c);
+	
+	int ms5607_reset(void);
+	int ms5607_start_pressure(void);
+	int ms5607_start_temperature(void);
+	int ms5607_read_adc_raw(uint32_t *pbuf);
+	void ms5607_calculate();
+	int I2C_ReadPROM(int item);
+	void getData(float *p,float *t);
+    void init(DigitalOut);
+	const uint8_t I2C_ADDR = 0xEC;
+    
+	uint16_t CalibData[8];
+
+    uint32_t D1,D2;
+
+	int32_t dT;
+    int32_t TEMP;
+
+    int64_t OFF, SENS;
+    int32_t P;
+    
 
 
-static const uint8_t I2C_ADDR = 0xEC;
+	private:
+    void compensateSecondOrder(void);
+    I2C* i2c;
+};
 
-static uint16_t CalibData[8];
-static uint32_t TempRaw = 0x00;
-static uint32_t PresRaw = 0x00;
-static int32_t TempUnitData = 0;
-static int32_t PresUnitData = 0;
-
-static int ms5607_reset(void);
-static int ms5607_start_pressure(void);
-static int ms5607_start_temperature(void);
-static int ms5607_read_adc_raw(uint32_t *pbuf);
-static void ms5607_calculate(int32_t *p, int32_t *t);
-static int I2C_ReadPROM(uint8_t offset, uint16_t *pbuf);
+#endif
